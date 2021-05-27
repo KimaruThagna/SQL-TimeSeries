@@ -77,3 +77,27 @@ SELECT rates.description, COUNT(vendor_id) AS num_trips,
  GROUP BY rates.description
  ORDER BY rates.description;
 ```
+
+Number of rides every 5 min on the first day
+
+Using vanilla SQL
+```
+SELECT
+  EXTRACT(hour from pickup_datetime) as hours,
+  trunc(EXTRACT(minute from pickup_datetime) / 5)*5 AS five_mins,
+  COUNT(*)
+FROM rides
+WHERE pickup_datetime < '2016-01-02 00:00'
+GROUP BY hours, five_mins;
+
+```
+
+Using `time_buckets` 
+
+```
+SELECT time_bucket('5 minute', pickup_datetime) AS five_min, count(*)
+FROM rides
+WHERE pickup_datetime < '2016-01-02 00:00'
+GROUP BY five_min
+ORDER BY five_min;
+```
