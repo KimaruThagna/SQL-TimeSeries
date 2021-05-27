@@ -60,5 +60,20 @@ SELECT rates.description, COUNT(vendor_id) AS num_trips,
   RANK () OVER (ORDER BY COUNT(vendor_id) DESC) AS trip_rank FROM rides
   JOIN rates ON rides.rate_code = rates.rate_code
   GROUP BY rates.description
-  ORDER BY LOWER(rates.description);
+  ORDER BY trip_rank;
+```
+
+## Larger query
+Find number of trips, avg duration, avg tip, avg cost, avg trip distance and avg number of passangers. All for rides to JWK and Newark only in January 2016
+
+```
+SELECT rates.description, COUNT(vendor_id) AS num_trips,
+   AVG(dropoff_datetime - pickup_datetime) AS avg_trip_duration, AVG(total_amount) AS avg_total,
+   AVG(tip_amount) AS avg_tip, MIN(trip_distance) AS min_distance, AVG (trip_distance) AS avg_distance, MAX(trip_distance) AS max_distance,
+   AVG(passenger_count) AS avg_passengers
+ FROM rides
+ JOIN rates ON rides.rate_code = rates.rate_code
+ WHERE rides.rate_code IN (2,3) AND pickup_datetime < '2016-02-01'
+ GROUP BY rates.description
+ ORDER BY rates.description;
 ```
