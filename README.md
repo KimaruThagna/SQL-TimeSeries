@@ -45,3 +45,20 @@ AND pickup_datetime < '2016-01-10'
 GROUP BY day ORDER BY day;
 ```
 
+## Number of rides per rate type
+```
+SELECT rate_code, COUNT(vendor_id) AS num_trips
+FROM rides
+GROUP BY rate_code
+ORDER BY rate_code;
+```
+
+## Number of rides per rate using descriptions and ranking
+
+```
+SELECT rates.description, COUNT(vendor_id) AS num_trips,
+  RANK () OVER (ORDER BY COUNT(vendor_id) DESC) AS trip_rank FROM rides
+  JOIN rates ON rides.rate_code = rates.rate_code
+  GROUP BY rates.description
+  ORDER BY LOWER(rates.description);
+```
