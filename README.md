@@ -101,3 +101,21 @@ WHERE pickup_datetime < '2016-01-02 00:00'
 GROUP BY five_min
 ORDER BY five_min;
 ```
+
+# POSTGIS EXTENSION
+Used for Geo data analysis and queries. To create the extension, run the command `CREATE EXTENSION postgis;`
+
+To run spatial analysis, you have to add postgis specific data to the columns.
+```
+ALTER TABLE rides ADD COLUMN pickup_geom geometry(POINT,2163);
+ALTER TABLE rides ADD COLUMN dropoff_geom geometry(POINT,2163);
+```
+With the new columns in place, update the table to fill the spatial data 
+
+```
+UPDATE rides SET pickup_geom = ST_Transform(ST_SetSRID(ST_MakePoint(pickup_longitude,pickup_latitude),4326),2163),
+   dropoff_geom = ST_Transform(ST_SetSRID(ST_MakePoint(dropoff_longitude,dropoff_latitude),4326),2163);
+
+```
+ ### Geo spatial query
+ - How many trips were taken every 30 min within a 400M radius of point X (lat, long) (40.7589,-73.9851)
